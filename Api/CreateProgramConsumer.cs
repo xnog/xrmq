@@ -6,12 +6,10 @@ namespace Api
     {
         private readonly ILogger<CreateProgramConsumer> logger;
 
-        public CreateProgramConsumer(ILogger<CreateProgramConsumer> logger, IXrmq xrmq) : base(xrmq)
+        public CreateProgramConsumer(ILogger<CreateProgramConsumer> logger, IXrmq xrmq) : base(xrmq, "teste")
         {
             this.logger = logger;
         }
-
-        protected override string GetQueue() => "teste";
 
         protected override void Handle(Message message)
         {
