@@ -98,7 +98,7 @@ public class Xrmq : IXrmq
         return Task.Run(() => {
             var channel = new PoolObject<IModel>(this.channelPool);
             var consumer = new EventingBasicConsumer(channel.Item);
-            consumer.Received += (model, evt) =>
+            consumer.Received += async (model, evt) =>
             {
                 try
                 {
@@ -107,24 +107,31 @@ public class Xrmq : IXrmq
                 }
                 catch (Exception e)
                 {
-                    evt.BasicProperties.Headers = evt.BasicProperties.Headers ?? new Dictionary<string, object>();
-                    evt.BasicProperties.Headers.TryGetValue("x-attempt", out var attempt);
-                    int.TryParse(attempt?.ToString() ?? "0", out var currentAttempt);
-                    var nextAttempt = currentAttempt + 1;
-                    evt.BasicProperties.Headers["x-attempt"] = nextAttempt;
-                    evt.BasicProperties.Headers["x-exception-message"] = e.Message;
-                    evt.BasicProperties.Headers["x-exception-stacktrace"] = e.ToString();
-                    evt.BasicProperties.Headers["x-date"] = DateTime.UtcNow.ToString("s");
+                    try
+                    {
+                        evt.BasicProperties.Headers = evt.BasicProperties.Headers ?? new Dictionary<string, object>();
+                        evt.BasicProperties.Headers.TryGetValue("x-attempt", out var attempt);
+                        int.TryParse(attempt?.ToString() ?? "0", out var currentAttempt);
+                        var nextAttempt = currentAttempt + 1;
+                        evt.BasicProperties.Headers["x-attempt"] = nextAttempt;
+                        evt.BasicProperties.Headers["x-exception-message"] = e.Message;
+                        evt.BasicProperties.Headers["x-exception-stacktrace"] = e.ToString();
+                        evt.BasicProperties.Headers["x-date"] = DateTime.UtcNow.ToString("s");
 
-                    if (this.properties.NumberOfRetries < nextAttempt)
+                        if (this.properties.NumberOfRetries < nextAttempt)
+                        {
+                            channel.Item.BasicReject(evt.DeliveryTag, false);
+                        }
+                        else
+                        {
+                            evt.BasicProperties.Expiration = this.properties.RetryDelayMs.TotalMilliseconds.ToString();
+                            await Publish("rx", queue, evt.BasicProperties, evt.Body.ToArray());
+                            channel.Item.BasicAck(evt.DeliveryTag, false);
+                        }
+                    }
+                    catch (Exception e2)
                     {
                         channel.Item.BasicReject(evt.DeliveryTag, false);
-                    }
-                    else
-                    {
-                        evt.BasicProperties.Expiration = this.properties.RetryDelayMs.TotalMilliseconds.ToString();
-                        Publish("rx", queue, evt.BasicProperties, evt.Body);
-                        channel.Item.BasicAck(evt.DeliveryTag, false);
                     }
                 }
             };

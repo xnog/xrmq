@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using X;
 
@@ -25,9 +27,12 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<IEnumerable<WeatherForecast>> Get()
     {
-        await xrmq.Publish<Message>(string.Empty, "teste", null!, new Message {
-            Code = "code",
-            Name = "name",
+        await Task.WhenAll(new List<Task>() {
+            xrmq.Publish<Message>(string.Empty, "teste", null!, new Message {
+                Code = "code",
+                Name = "name",
+            }),
+            xrmq.Publish<byte[]>(string.Empty, "program", null!, Encoding.UTF8.GetBytes("bytes em msg"))
         });
 
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast

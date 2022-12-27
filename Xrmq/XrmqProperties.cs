@@ -12,5 +12,5 @@ public class XrmqProperties
     public int NumberOfRetries { get; set; } = 3;
     public TimeSpan RetryDelayMs { get; set; } = TimeSpan.FromSeconds(10);
     public bool WaitForConfirm { get; set; } = true;
-    public TimeSpan WaitForConfirmTimeout { get; set; } = TimeSpan.FromSeconds(1);
+    public TimeSpan WaitForConfirmTimeout { get; set; } = TimeSpan.FromSeconds(5);
 }
