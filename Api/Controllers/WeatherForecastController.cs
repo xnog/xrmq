@@ -23,9 +23,9 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public async Task<IEnumerable<WeatherForecast>> Get()
     {
-        xrmq.Publish<Message>(string.Empty, "teste", null!, new Message {
+        await xrmq.Publish<Message>(string.Empty, "teste", null!, new Message {
             Code = "code",
             Name = "name",
         });

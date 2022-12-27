@@ -17,7 +17,7 @@ public abstract class XrmqConsumerBackgroundService<T> : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        xrmq.Consume<T>(queue, Handle);
+        await xrmq.Consume<T>(queue, Handle);
         
         while (!cancellationToken.IsCancellationRequested)
         {
