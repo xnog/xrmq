@@ -12,8 +12,9 @@ public interface IXrmq
     public Task QueueBind(string queue, string exchange, string routingKey, IDictionary<string, object> arguments);
     public Task ExchangeBind(string destination, string source, string routingKey, IDictionary<string, object> arguments);
     public Task QueueDeclare(string queue);
-    public Task Publish(string exchange, string routingKey, IBasicProperties basicProperties, ReadOnlyMemory<byte> body);
+    public Task Publish(string exchange, string routingKey, IBasicProperties basicProperties, byte[] body);
     public Task Publish<T>(string exchange, string routingKey, IBasicProperties basicProperties, T message);
+    public Task Consume(string queue, Action<byte[]> onReceive);
     public Task Consume<T>(string queue, Action<T> onReceive);
 }
 
@@ -67,7 +68,7 @@ public class Xrmq : IXrmq
         });
     }
 
-    public Task Publish(string exchange, string routingKey, IBasicProperties basicProperties, ReadOnlyMemory<byte> body)
+    public Task Publish(string exchange, string routingKey, IBasicProperties basicProperties, byte[] body)
     {
         return Task.Run(() => {
             using var channel = new PoolObject<IModel>(this.channelPool);
