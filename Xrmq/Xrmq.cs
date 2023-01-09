@@ -129,7 +129,7 @@ public class Xrmq : IXrmq
                             channel.Item.BasicAck(evt.DeliveryTag, false);
                         }
                     }
-                    catch (Exception e2)
+                    catch
                     {
                         channel.Item.BasicReject(evt.DeliveryTag, false);
                     }

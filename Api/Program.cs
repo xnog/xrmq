@@ -1,5 +1,4 @@
 using Api;
-using Microsoft.Extensions.DependencyInjection;
 using X;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +9,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddRabbitMQ(new XrmqProperties());
 // builder.Services.AddHostedService<CreateProgramConsumer>();
 // builder.Services.AddHostedService<TesteConsumer>();

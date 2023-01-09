@@ -1,13 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>xrmq</PackageId>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Authors>xnog</Authors>
     <Company>hid</Company>
+    <Copyright>MIT</Copyright>
+    <Description>netcore rabbitmq lib</Description>
+    <PackageProjectUrl>https://github.com/xnog/xrmq</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/xnog/xrmq</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>rabbitmq publisher subscriber</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
