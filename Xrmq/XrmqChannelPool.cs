@@ -19,6 +19,12 @@ public class ChannelPooledObjectPolicy : IPooledObjectPolicy<IModel>
             HostName = this.properties.HostName,
             Port = this.properties.Port,
         };
+        if(this.properties.Ssl) {
+            this.connectionFactory.Ssl = new SslOption() {
+                ServerName = this.properties.HostName,
+                Enabled = this.properties.Ssl,
+            };
+        }
         this.connection = GetConnection();
     }
 

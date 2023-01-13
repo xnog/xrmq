@@ -7,6 +7,7 @@ public class XrmqProperties
     public string HostName { get; set; } = "localhost";
     public int Port { get; set; } = 5672;
     public string VHost { get; set; } = "/";
+    public bool Ssl { get; set; } = false;
     public int MaxPoolSize { get; set; } = 100;
     public ushort PrefetchCount { get; set; } = 20;
     public int NumberOfRetries { get; set; } = 3;
