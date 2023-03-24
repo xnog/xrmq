@@ -15,8 +15,8 @@ public interface IXrmq
     public Task ExchangeDeclare(string exchange, string type, bool durable, bool autoDelete, IDictionary<string, object> arguments);
     public Task Publish(string exchange, string routingKey, IBasicProperties basicProperties, byte[] body);
     public Task Publish<T>(string exchange, string routingKey, IBasicProperties basicProperties, T message);
-    public Task Consume(string queue, Action<byte[]> onReceive);
-    public Task Consume<T>(string queue, Action<T> onReceive);
+    public Task Consume(string queue, Func<byte[], Task> onReceive);
+    public Task Consume<T>(string queue, Func<T, Task> onReceive);
 }
 
 public class Xrmq : IXrmq
@@ -102,7 +102,7 @@ public class Xrmq : IXrmq
         });
     }
 
-    public Task Consume(string queue, Action<byte[]> onReceive)
+    public Task Consume(string queue, Func<byte[], Task> onReceive)
     {
         return Task.Run(() => {
             var channel = new PoolObject<IModel>(this.channelPool);
@@ -111,7 +111,7 @@ public class Xrmq : IXrmq
             {
                 try
                 {
-                    onReceive(evt.Body.ToArray());
+                    await onReceive(evt.Body.ToArray());
                     channel.Item.BasicAck(evt.DeliveryTag, false);
                 }
                 catch (Exception e)
@@ -148,11 +148,11 @@ public class Xrmq : IXrmq
         });
     }
 
-    public Task Consume<T>(string queue, Action<T> onReceive)
+    public Task Consume<T>(string queue, Func<T, Task> onReceive)
     {
-        return Consume(queue, (byte[] message) => {
+        return Consume(queue, async (byte[] message) => {
             var obj = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(message));
-            onReceive(obj!);
+            await onReceive(obj!);
         });
     }
 }

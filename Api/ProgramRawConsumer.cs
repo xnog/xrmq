@@ -12,10 +12,11 @@ namespace Api
             this.logger = logger;
         }
 
-        protected override void Handle(byte[] message)
+        protected override async Task Handle(byte[] message)
         {
             logger.LogInformation("message program: {m}", Encoding.UTF8.GetString(message));
-            throw new Exception("sagaz");
+            await Task.FromException(new Exception("sagaz"));
+
         }
     }
 }

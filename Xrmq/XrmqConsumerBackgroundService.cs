@@ -13,7 +13,7 @@ public abstract class XrmqConsumerBackgroundService<T> : BackgroundService
         this.queue = queue;
     }
 
-    protected abstract void Handle(T message);
+    protected abstract Task Handle(T message);
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
