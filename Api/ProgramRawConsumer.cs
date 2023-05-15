@@ -3,7 +3,7 @@ using X;
 
 namespace Api
 {
-    public class ProgramRawConsumer : XrmqConsumerBackgroundService<byte[]>
+    public class ProgramRawConsumer : XrmqRawConsumerBackgroundService
     {
         private readonly ILogger<ProgramRawConsumer> logger;
 
@@ -16,7 +16,6 @@ namespace Api
         {
             logger.LogInformation("message program: {m}", Encoding.UTF8.GetString(message));
             await Task.FromException(new Exception("sagaz"));
-
         }
     }
 }

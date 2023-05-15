@@ -31,7 +31,7 @@ public class WeatherForecastController : ControllerBase
                 Code = "code",
                 Name = "name",
             }),
-            xrmq.Publish<byte[]>(string.Empty, "program", null!, Encoding.UTF8.GetBytes("bytes em msg"))
+            xrmq.Publish(string.Empty, "program", null!, Encoding.UTF8.GetBytes("bytes em msg"))
         });
 
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
